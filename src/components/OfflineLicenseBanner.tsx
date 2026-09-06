@@ -176,22 +176,36 @@ export const OfflineLicenseBanner: React.FC = () => {
         );
     }
 
-    // Offline Grace Period Active (Valid offline)
-    if (license.isOffline) {
+    // Offline Grace Period Active (Valid offline) or verification falling due
+    if (license.isOffline || verificationDueSoon) {
+        const urgent = offlineDaysLeft <= 1;
         return (
-            <div className="bg-amber-500/15 border-b border-amber-500/30 text-amber-900 dark:text-amber-300 px-4 py-2 flex items-center justify-between text-xs font-medium">
+            <div className={`${urgent ? 'bg-orange-500/20 border-orange-500/40 text-orange-900 dark:text-orange-300' : 'bg-amber-500/15 border-amber-500/30 text-amber-900 dark:text-amber-300'} border-b px-4 py-2 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-medium`}>
                 <div className="flex items-center gap-2">
-                    <Wifi className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <Wifi className="w-4 h-4 shrink-0" />
                     <span>
-                        Offline Mode Active — <strong>SaaS License Valid for {license.graceDaysRemaining} more days offline</strong>
+                        {license.isOffline ? 'Offline Mode Active — ' : 'Internet check pending — '}
+                        <strong>
+                            {offlineDaysLeft > 0
+                                ? `works for ${offlineDaysLeft} more day${offlineDaysLeft !== 1 ? 's' : ''} without internet`
+                                : 'connect to the internet today to keep billing active'}
+                        </strong>
+                        {' '}(license is checked every {graceDays} days)
                     </span>
                 </div>
-                <Badge variant="outline" className="border-amber-500/40 text-amber-800 dark:text-amber-300 text-[10px]">
-                    Auto-syncs when reconnected
-                </Badge>
+                <div className="flex items-center gap-2 shrink-0">
+                    <Badge variant="outline" className="border-current/40 text-[10px]">
+                        Auto-syncs when reconnected
+                    </Badge>
+                    <Button size="sm" variant="outline" onClick={handleManualSync} disabled={syncing} className="h-7 text-[11px]">
+                        <RefreshCw className={`w-3 h-3 mr-1 ${syncing ? 'animate-spin' : ''}`} />
+                        Check now
+                    </Button>
+                </div>
             </div>
         );
     }
+
 
     return null;
 };
