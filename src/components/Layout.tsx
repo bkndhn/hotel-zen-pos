@@ -252,7 +252,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     : licenseState.lockReason === 'clock_tampered'
                       ? 'Clock Tampering Detected'
                       : licenseState.lockReason === 'grace_expired'
-                        ? 'Offline Grace Period Expired'
+                        ? 'Offline Period Expired'
+
                         : 'Subscription Expired'}
                 </h2>
                 <p className="text-muted-foreground text-sm leading-relaxed">
