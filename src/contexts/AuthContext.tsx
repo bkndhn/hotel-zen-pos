@@ -683,11 +683,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let schedulerStop: (() => void) | null = null;
     if (adminId && profile.role !== 'super_admin') {
       const handle = startLicenseScheduler(adminId, {
-        onEnforce: (_status, reason) => {
+        onStatus: () => {
+          window.dispatchEvent(new Event('zenpos-license-changed'));
+        },
+        onEnforce: (status, reason) => {
           devLog('[AuthContext] License enforcement triggered:', reason);
+          // Offline verification overdue → keep the session but show the
+          // full-screen lockdown so staff can still read data and reconnect.
+          if (status.lockReason === 'grace_expired' && !status.isForceLoggedOut) {
+            window.dispatchEvent(new Event('zenpos-license-changed'));
+            return;
+          }
           performForceLogout(reason);
         },
       });
+
       schedulerStop = handle.stop;
     }
 
