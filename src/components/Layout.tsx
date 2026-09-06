@@ -109,13 +109,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     const handleOnline = () => {
       checkLicense();
     };
+    const handleLicenseChanged = () => {
+      setLicenseState(checkOfflineLicenseStatus());
+    };
     window.addEventListener('online', handleOnline);
+    window.addEventListener('zenpos-license-changed', handleLicenseChanged);
 
     return () => {
       clearInterval(heartbeat);
       window.removeEventListener('online', handleOnline);
+      window.removeEventListener('zenpos-license-changed', handleLicenseChanged);
     };
   }, [user?.id, profile?.id, checkLicense]);
+
 
   // Listen for Super Admin Expiry Push Reminders & trigger System / Android PWA Notifications
   useEffect(() => {
