@@ -57,7 +57,11 @@ export const OfflineLicenseBanner: React.FC = () => {
     if (profile?.role === 'super_admin') return null;
 
     // If online and fully valid with no warnings, render no banner
-    if (!license.isOffline && license.isValid && license.degradationStage === 'full') return null;
+    const graceDays = license.graceDays ?? 7;
+    const offlineDaysLeft = license.graceDaysRemaining;
+    const verificationDueSoon = license.isValid && offlineDaysLeft <= 3;
+    if (!license.isOffline && license.isValid && license.degradationStage === 'full' && !verificationDueSoon) return null;
+
 
     // Force Logout Banner
     if (license.isForceLoggedOut) {
