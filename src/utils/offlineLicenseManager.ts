@@ -298,11 +298,14 @@ export function checkOfflineLicenseStatus(): LicenseStatus {
             };
         }
 
-        // If offline and grace period expired (> 7 days without online verification)
-        if (isOffline && elapsedDays > graceDays) {
+        // Hard offline expiry: more than `graceDays` (7) since the last successful
+        // server verification. Applies whether or not the device *thinks* it is
+        // online — only a real successful verification resets the clock.
+        if (elapsedDays > graceDays) {
             return {
                 isValid: false,
-                isOffline: true,
+                isOffline,
+                graceDays,
                 graceDaysRemaining: 0,
                 subscriptionStatus: 'locked',
                 lockReason: 'grace_expired',
@@ -313,16 +316,19 @@ export function checkOfflineLicenseStatus(): LicenseStatus {
             };
         }
 
+
         // Determine degradation stage from subscription end date
         const stage = getDegradationStage(daysPastEnd);
 
         return {
             isValid: stage !== 'locked',
             isOffline,
+            graceDays,
             graceDaysRemaining,
             subscriptionStatus: cleanPayload.status,
             planName: cleanPayload.planName,
             lockReason: null,
+
             lastVerifiedAt: cleanPayload.lastVerifiedAt,
             isForceLoggedOut: false,
             subscriptionEndDate: cleanPayload.subscriptionEndDate,

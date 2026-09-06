@@ -109,13 +109,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     const handleOnline = () => {
       checkLicense();
     };
+    const handleLicenseChanged = () => {
+      setLicenseState(checkOfflineLicenseStatus());
+    };
     window.addEventListener('online', handleOnline);
+    window.addEventListener('zenpos-license-changed', handleLicenseChanged);
 
     return () => {
       clearInterval(heartbeat);
       window.removeEventListener('online', handleOnline);
+      window.removeEventListener('zenpos-license-changed', handleLicenseChanged);
     };
   }, [user?.id, profile?.id, checkLicense]);
+
 
   // Listen for Super Admin Expiry Push Reminders & trigger System / Android PWA Notifications
   useEffect(() => {
@@ -252,7 +258,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     : licenseState.lockReason === 'clock_tampered'
                       ? 'Clock Tampering Detected'
                       : licenseState.lockReason === 'grace_expired'
-                        ? 'Offline Grace Period Expired'
+                        ? 'Offline Period Expired'
+
                         : 'Subscription Expired'}
                 </h2>
                 <p className="text-muted-foreground text-sm leading-relaxed">
@@ -261,7 +268,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     : licenseState.lockReason === 'clock_tampered'
                       ? 'System clock has been set backwards. Connect to the internet to re-verify your license.'
                       : licenseState.lockReason === 'grace_expired'
-                        ? 'Your device has been offline for too long. Connect to the internet to verify your subscription.'
+                        ? 'This device has worked offline for more than 7 days. Connect it to the internet once to check your subscription and unlock billing again. Your saved bills and data are safe.'
+
                         : 'Your subscription has expired. Please renew to continue using ZenPOS.'}
                 </p>
               </div>
