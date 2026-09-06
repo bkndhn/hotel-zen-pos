@@ -323,10 +323,12 @@ export function checkOfflineLicenseStatus(): LicenseStatus {
         return {
             isValid: stage !== 'locked',
             isOffline,
+            graceDays,
             graceDaysRemaining,
             subscriptionStatus: cleanPayload.status,
             planName: cleanPayload.planName,
             lockReason: null,
+
             lastVerifiedAt: cleanPayload.lastVerifiedAt,
             isForceLoggedOut: false,
             subscriptionEndDate: cleanPayload.subscriptionEndDate,
