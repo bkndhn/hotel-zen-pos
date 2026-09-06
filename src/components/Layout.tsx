@@ -262,7 +262,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     : licenseState.lockReason === 'clock_tampered'
                       ? 'System clock has been set backwards. Connect to the internet to re-verify your license.'
                       : licenseState.lockReason === 'grace_expired'
-                        ? 'Your device has been offline for too long. Connect to the internet to verify your subscription.'
+                        ? 'This device has worked offline for more than 7 days. Connect it to the internet once to check your subscription and unlock billing again. Your saved bills and data are safe.'
+
                         : 'Your subscription has expired. Please renew to continue using ZenPOS.'}
                 </p>
               </div>
